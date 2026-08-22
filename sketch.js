@@ -1,6 +1,21 @@
+
+const titleLookup = {
+    de: "Einsatzbetriebe und Einsatzplätze pro Tätigkeitsbereich",
+    fr: "Établissements et places d'affectation par domaine d'activité",
+    it: "Istituti e posti d'impiego per ambito di attività"
+}
+
 function setup() {
+
+  let params = getURLParams();
+  console.log(params);
+
+  let title = titleLookup[params.lang];
+  console.log("title:",title);
+
+  d3.select("#titleContainer").text(title);
   noCanvas();
-  drawChart();
+  drawChart(params.lang);
   window.addEventListener("resize", drawChart);
 }
 
@@ -19,7 +34,7 @@ function formatSwiss(n) {
   return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
 }
 
-function drawChart() {
+function drawChart(lang) {
 
   d3.select("#chart").selectAll("*").remove();
 
@@ -27,7 +42,10 @@ function drawChart() {
   const width = containerWidth;
   const isMobile = width < 600;
 
-  d3.csv("ABI_Einsatzbetriebe_und_Einsatzplaetze_nach_TB_2025.csv").then(raw => {
+  let filename = "data_" + lang + ".csv";
+  console.log("filename",filename);
+ // d3.csv("ABI_Einsatzbetriebe_und_Einsatzplaetze_nach_TB_2025.csv").then(raw => {
+  d3.csv(filename).then(raw => {
 
     const data = raw.map(d => ({
       label: d["Tätigkeit"],
